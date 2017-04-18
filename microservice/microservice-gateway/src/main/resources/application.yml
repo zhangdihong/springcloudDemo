@@ -1,0 +1,89 @@
+spring:
+  application:
+        name: microservice-gateway
+server:
+   port: 8100
+eureka:
+  client:
+    healthcheck:
+    enabled: true
+    service-url:
+         defaultZone: http://test1:8081/eureka
+instance:
+      prefer-ip-address: true
+      nstance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}
+management:
+  security:
+   enabled: false
+
+#方案一
+#zuul:
+#  ignoredServices: '*'
+#  routes:
+#    microservice-customer-user: /user/**
+
+#方案二
+zuul:
+ routes:
+    user_service:
+             path: /user-path/**
+             serviceId: microservice-customer-user
+
+#方案三
+#zuul:
+#  routes:
+#     user_serice:
+#          path: /user/**
+#          url: http://localhost:8087/
+
+#方案四
+#zuul:
+#  routes:
+#     user_service:
+#        path: /user/**
+#        serviceId: microservice-customer-user
+#ribbon:
+#  eureka:
+#    enabled: false
+#microservice-customer-user:
+#  ribbon:
+#    listOfServers: http://localhost:8087,http://localhost:8088
+
+#方案 五看applicaiton
+
+#方案六
+#zuul:
+#  routes:
+#    user_service:
+#      prefix: /api
+#      strip-prefix: false
+
+#方案七
+#zuul:
+# ignoredPatterns: /**/user/**
+# routes:
+#   user_service: /user/**
+
+#方案八 敏感头部信息 不能流传到下游服务器
+#zuul:
+# routes:
+#  user_service:
+#       path: /user/**
+#       sensitiveHeaders: Cookie,Set-Cookie,Authorization
+#       url:
+
+#方案九
+#zuul:
+# routes:
+#    first:
+#      path: /first/**
+#      url:
+#    second:
+#      path: /second/**
+#      url: forward:/second
+#    third:
+#      path: /third/**
+#      url: forward: /3rd
+#    legacy:
+#        path: /**
+#        url: **

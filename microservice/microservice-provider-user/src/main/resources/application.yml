@@ -1,0 +1,66 @@
+spring:
+  application:
+        name: microservice-provider-user
+
+
+---
+spring:
+  profiles: p1
+# log
+log:
+  path: ./logs/
+  name: dev.log
+        error: dev-error.log
+server:
+  port: 8086
+eureka:
+  client:
+    healthcheck:
+    enabled: true
+    service-url:
+         defaultZone: http://test1:8081/eureka
+instance:
+#      leaseRenewalIntervalInSeconds: 10      #重新续约时间不建议修改
+#      leaseExpirationDurationInseconds: 30   # 过期周期 30秒
+      prefer-ip-address: true
+      instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}
+---
+spring:
+  profiles: p2
+server:
+  port: 8085
+eureka:
+  client:
+    healthcheck:
+    enabled: true
+    service-url:
+         defaultZone: http://test1:8081/eureka
+instance:
+      prefer-ip-address: true
+      instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}
+---
+spring:
+    datasource:
+        name: test
+        url: jdbc:mysql://localhost:3306/test
+        username: root
+        password:
+        # 使用druid数据源
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        filters: stat
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
+  typeAliasesPackage: xx.mapper.model

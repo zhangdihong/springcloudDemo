@@ -1,0 +1,30 @@
+spring:
+  application:
+        name: microservice-customer-user
+
+---
+spring:
+ profiles: a
+server:
+  port: 8087
+---
+spring:
+  profiles: b
+server:
+   port: 8088
+---
+eureka:
+  client:
+    healthcheck:
+    enabled: true
+    service-url:
+         defaultZone: http://test1:8081/eureka
+instance:
+      prefer-ip-address: true
+      nstance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}
+logging:
+  level:
+    io.github.zhangdihong.server.controller.UserFeignClient: DEBUG
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 3000
+#hystrix.stream.maxConcurrentConnections: 20
+hystrix.command.execution.isolation.semaphore.maxConcurrentRequests.maxConcurrentConnections: 20

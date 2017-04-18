@@ -1,0 +1,55 @@
+spring:
+ application:
+    name: EUREKA_HA
+---
+spring:
+    profiles: test1
+server:
+  port: 8081
+eureka:
+  datacenter: cloud
+  environment: product
+  server:
+     enableSelfPreservation: true #是否开启安全模式在开发和测试环境中可以 开闭，但是生产切记不能关闭 会T掉client
+#     evictionIntervalTimerInMs: 30000  #默认定时周期五分钟
+  instance:
+#          instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+          hostname: test1
+          statusPageUrl: https://${eureka.hostname}/info
+          healthCheckUrl: https://${eureka.hostname}/health
+          homePageUrl: https://${eureka.hostname}/
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    healthcheck: true
+    service-url:
+          defaultZone: http://test2:8089/eureka,http://test3:8083/eureka
+---
+spring:
+    profiles: test2
+server:
+  port: 8089
+eureka:
+  instance:
+          hostname: test2
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+
+    service-url:
+          defaultZone: http://test1:8081/eureka,http://test3:8083/eureka
+---
+spring:
+    profiles: test3
+server:
+  port: 8083
+eureka:
+  instance:
+          hostname: test3
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+
+    service-url:
+          defaultZone: http://test1:8081/eureka,http://test2:8089/eureka
+
